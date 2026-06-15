@@ -359,21 +359,18 @@
 
     <div class="card">
       <div class="pergunta"><span class="num">1.</span> Em qual bairro ou comunidade você mora?</div>
-      <div class="opcoes" id="opc-regiao" style="max-height:320px; overflow-y:auto; padding-right:4px;">
-        <button class="opcao" onclick="selecionar('regiao', 'Beira Rio', this)"><div class="circulo"></div>Beira Rio</button>
+      <div class="opcoes" id="opc-regiao">
         <button class="opcao" onclick="selecionar('regiao', 'Bela Vista', this)"><div class="circulo"></div>Bela Vista</button>
         <button class="opcao" onclick="selecionar('regiao', 'Centro', this)"><div class="circulo"></div>Centro</button>
         <button class="opcao" onclick="selecionar('regiao', 'Esplanada', this)"><div class="circulo"></div>Esplanada</button>
         <button class="opcao" onclick="selecionar('regiao', 'Jardim Trevo', this)"><div class="circulo"></div>Jardim Trevo</button>
+        <button class="opcao" onclick="selecionar('regiao', 'Moreiras (zona rural)', this)"><div class="circulo"></div>Moreiras <span style="font-size:11px;color:#888;">(zona rural)</span></button>
         <button class="opcao" onclick="selecionar('regiao', 'Planalto', this)"><div class="circulo"></div>Planalto</button>
-        <button class="opcao" onclick="selecionar('regiao', 'Ramos', this)"><div class="circulo"></div>Ramos</button>
-        <button class="opcao" onclick="selecionar('regiao', 'Santo Antônio das Moreiras', this)"><div class="circulo"></div>Santo Antônio das Moreiras</button>
-        <button class="opcao" onclick="selecionar('regiao', 'São Benedito', this)"><div class="circulo"></div>São Benedito</button>
-        <button class="opcao" onclick="selecionar('regiao', 'Sol Nascente', this)"><div class="circulo"></div>Sol Nascente</button>
-        <button class="opcao" onclick="selecionar('regiao', 'Vila Nova', this)"><div class="circulo"></div>Vila Nova</button>
-        <button class="opcao" onclick="selecionar('regiao', 'Vila Sena', this)"><div class="circulo"></div>Vila Sena</button>
-        <button class="opcao" onclick="selecionar('regiao', 'Zona Rural', this)"><div class="circulo"></div>Zona Rural</button>
-        <button class="opcao" onclick="selecionar('regiao', 'Outra', this)"><div class="circulo"></div>Outra</button>
+        <button class="opcao" onclick="selecionar('regiao', 'São Benedito (zona rural)', this)"><div class="circulo"></div>São Benedito <span style="font-size:11px;color:#888;">(zona rural)</span></button>
+        <button class="opcao" onclick="selecionarOutro(this)"><div class="circulo"></div>Outro</button>
+      </div>
+      <div id="campo-outro-regiao" style="display:none; margin-top:10px;">
+        <input type="text" id="outro-regiao" placeholder="Qual bairro ou comunidade? (opcional)">
       </div>
       <div class="aviso-obrigatorio" id="aviso-regiao">⚠️ Por favor, selecione uma opção.</div>
     </div>
@@ -700,7 +697,19 @@ function atualizarProgresso(bloco) {
   document.getElementById('progressFill').style.width = pct + '%';
 }
 
+function selecionarOutro(btn) {
+  respostas['regiao'] = 'Outro';
+  document.getElementById('opc-regiao').querySelectorAll('.opcao').forEach(b => b.classList.remove('selecionada'));
+  btn.classList.add('selecionada');
+  document.getElementById('campo-outro-regiao').style.display = 'block';
+  document.getElementById('aviso-regiao').style.display = 'none';
+}
+
 function selecionar(campo, valor, btn) {
+  if (campo === 'regiao') {
+    document.getElementById('campo-outro-regiao').style.display = 'none';
+    document.getElementById('outro-regiao').value = '';
+  }
   respostas[campo] = valor;
   btn.closest('.opcoes').querySelectorAll('.opcao').forEach(b => b.classList.remove('selecionada'));
   btn.classList.add('selecionada');
@@ -734,6 +743,11 @@ function validarBloco(bloco) {
   let valido = true;
 
   if (bloco === 1) {
+    // Capturar campo livre de "Outro" bairro
+    if (respostas['regiao'] === 'Outro') {
+      const outroVal = document.getElementById('outro-regiao').value.trim();
+      if (outroVal) respostas['regiao'] = 'Outro: ' + outroVal;
+    }
     ['regiao', 'faixaEtaria', 'sexo', 'escolaridade'].forEach(campo => {
       if (!respostas[campo]) {
         document.getElementById('aviso-' + campo).style.display = 'block';
