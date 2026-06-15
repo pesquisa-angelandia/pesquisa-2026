@@ -551,24 +551,6 @@ let ipUsuario = '';
 let blocoAtual = 0;
 const totalBlocos = 5;
 
-// Captura GPS silenciosa — não bloqueia se recusar
-function capturarGPS() {
-  if (!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(
-    function(pos) {
-      respostas.gpsLat = pos.coords.latitude.toFixed(6);
-      respostas.gpsLng = pos.coords.longitude.toFixed(6);
-      respostas.gpsPrecisao = Math.round(pos.coords.accuracy) + 'm';
-    },
-    function() {
-      // Recusou ou erro — continua sem GPS
-      respostas.gpsLat = '';
-      respostas.gpsLng = '';
-      respostas.gpsPrecisao = '';
-    },
-    { timeout: 8000, maximumAge: 60000 }
-  );
-}
 
 // Áreas de avaliação
 const areas = [
@@ -709,7 +691,6 @@ function confirmarResidencia(morador) {
     window.location.replace('fora-da-area.html');
     return;
   }
-  capturarGPS();
   document.getElementById('telaIntro').classList.remove('ativo');
   mostrarBloco(1);
 }
