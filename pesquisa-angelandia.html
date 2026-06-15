@@ -682,8 +682,7 @@ function esconderTudo() {
 
 function confirmarResidencia(morador) {
   if (!morador) {
-    esconderTudo();
-    document.getElementById('telaFora').style.display = 'block';
+    window.location.replace('fora-da-area.html');
     return;
   }
   document.getElementById('telaIntro').classList.remove('ativo');
